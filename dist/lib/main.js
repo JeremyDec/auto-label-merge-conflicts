@@ -12,6 +12,7 @@ async function run() {
         required: true
     });
     const octokit = new github.GitHub(myToken);
+    const comment = core.getInput('COMMENT');
     const maxRetries = Number(core.getInput('MAX_RETRIES'));
     const waitMs = Number(core.getInput('WAIT_MS'));
     console.debug(`maxRetries=${maxRetries} ; waitMs=${waitMs}`);
@@ -74,16 +75,26 @@ async function run() {
                 core.debug(`Skipping PR #${pullrequest.node.number}, it has conflicts but is already labeled`);
             }
             else {
-                core.debug(`Labeling PR #${pullrequest.node.number}...`);
+                core.debug(`Labelling and commenting PR #${pullrequest.node.number}...`);
                 try {
                     await queries_1.addLabelsToLabelable(octokit, {
                         labelIds: conflictLabel.node.id,
                         labelableId: pullrequest.node.id
                     });
-                    core.debug(`PR #${pullrequest.node.number} done`);
+                    core.debug(`Add label to PR #${pullrequest.node.number} done`);
                 }
                 catch (error) {
                     core.setFailed('addLabelsToLabelable request failed: ' + error);
+                }
+                if (comment) {
+                    try {
+                        await queries_1.addComment(comment, octokit, pullrequest.node.id);
+                        core.debug(`Add comment to PR #${pullrequest.node.number} done`);
+                    }
+                    catch (error) {
+                        core.debug('addComment request failed: ' + error);
+                        core.setFailed('addComment request failed: ' + error);
+                    }
                 }
             }
         });

@@ -62,7 +62,7 @@ const getPullRequestPages = (octokit: github.GitHub, context: Context, cursor?: 
   }
 
   return octokit.graphql(query, {
-    headers: { Accept: 'application/vnd.github.ocelot-preview+json' }
+    headers: { Accept: 'application/vnd.github+json' }
   });
 };
 
@@ -113,7 +113,7 @@ export const getLabels = (octokit: github.GitHub, context: Context, labelName: s
   }`;
 
   return octokit.graphql(query, {
-    headers: { Accept: 'application/vnd.github.ocelot-preview+json' }
+    headers: { Accept: 'application/vnd.github+json' }
   });
 };
 
@@ -135,7 +135,24 @@ export const addLabelsToLabelable = (
     }`;
 
   return octokit.graphql(query, {
-    headers: { Accept: 'application/vnd.github.starfire-preview+json' }
+    headers: { Accept: 'application/vnd.github+json' }
+  });
+};
+
+export const addComment = (
+  text: string,
+  octokit: github.GitHub,
+  nodeID: string,
+) => {
+  const query = `
+    mutation {
+      addComment(input: {body: "${text}", subjectId: "${nodeID}"}) {
+        clientMutationId
+      }
+    }`;
+
+  return octokit.graphql(query, {
+    headers: { Accept: 'application/vnd.github+json' }
   });
 };
 
@@ -157,6 +174,6 @@ export const removeLabelsFromLabelable = (
     }`;
 
   return octokit.graphql(query, {
-    headers: { Accept: 'application/vnd.github.starfire-preview+json' }
+    headers: { Accept: 'application/vnd.github+json' }
   });
 };

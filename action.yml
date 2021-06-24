@@ -11,6 +11,10 @@ inputs:
   GITHUB_TOKEN:
     description: 'Github token / secret'
     required: true
+  COMMENT:
+    description: 'Text to be commented on the PR. If not set, nothing will be commented.'
+    required: false
+    default: 'Rebase required'
   MAX_RETRIES:
     description: 'number of times to retry on a failed mergable check'
     required: false
@@ -25,5 +29,6 @@ runs:
   args:
     - ${{ inputs.CONFLICT_LABEL_NAME }}
     - ${{ inputs.GITHUB_TOKEN }}
+    - ${{ inputs.COMMENT }}
     - ${{ inputs.MAX_RETRIES }}
     - ${{ inputs.WAIT_MS }}
